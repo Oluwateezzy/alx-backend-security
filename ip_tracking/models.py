@@ -34,3 +34,28 @@ class BlockedIP(models.Model):
 
     def __str__(self):
         return f"{self.ip_address} (Blocked)"
+
+
+class SuspiciousIP(models.Model):
+    REASON_CHOICES = [
+        ("HIGH_VOLUME", "High request volume"),
+        ("SENSITIVE_PATHS", "Accessed sensitive paths"),
+        ("MULTIPLE_REASONS", "Multiple suspicious activities"),
+    ]
+
+    ip_address = models.CharField(max_length=45)
+    reason = models.CharField(max_length=20, choices=REASON_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_blocked = models.BooleanField(default=False)
+    details = models.JSONField(default=dict, blank=True)
+
+    class Meta:
+        verbose_name = "Suspicious IP"
+        verbose_name_plural = "Suspicious IPs"
+        indexes = [
+            models.Index(fields=["ip_address"]),
+            models.Index(fields=["created_at"]),
+        ]
+
+    def __str__(self):
+        return f"{self.ip_address} - {self.get_reason_display()}"
