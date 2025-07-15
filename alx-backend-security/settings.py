@@ -123,3 +123,10 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+IPGEOLOCATION_SETTINGS = {
+    "API_KEY": "your_api_key_here",  # Get one from https://ipgeolocation.io/
+    "ENDPOINT": "https://api.ipgeolocation.io/ipgeo",
+    "TIMEOUT": 10,  # seconds
+    "CACHE_TIMEOUT": 86400,  # 24 hours in seconds
+}

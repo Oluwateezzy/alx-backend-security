@@ -6,6 +6,8 @@ class RequestLog(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     path = models.CharField(max_length=255)
     method = models.CharField(max_length=10, blank=True)
+    country = models.CharField(max_length=100, blank=True, null=True)
+    city = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
         ordering = ["-timestamp"]
@@ -13,7 +15,12 @@ class RequestLog(models.Model):
         verbose_name_plural = "Request Logs"
 
     def __str__(self):
-        return f"{self.ip_address} - {self.method} {self.path} - {self.timestamp}"
+        location = (
+            f"{self.city}, {self.country}"
+            if self.city and self.country
+            else "Unknown location"
+        )
+        return f"{self.ip_address} ({location}) - {self.method} {self.path}"
 
 
 class BlockedIP(models.Model):
