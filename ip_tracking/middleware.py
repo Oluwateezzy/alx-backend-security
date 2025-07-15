@@ -3,6 +3,8 @@ from django.core.cache import cache
 from ipware import get_client_ip
 from ip_tracking.models import BlockedIP, RequestLog
 from django_ip_geolocation.decorators import with_ip_geolocation
+from django_ratelimit.middleware import RatelimitMiddleware
+from django.conf import settings
 
 
 class IPTrackingMiddleware:
@@ -40,3 +42,17 @@ class IPTrackingMiddleware:
             )
 
         return self.get_response(request)
+
+
+class CustomRateLimitMiddleware(RatelimitMiddleware):
+    def get_rate_limit_key(self, request):
+        if request.user.is_authenticated:
+            return f"user:{request.user.pk}"
+        return f'ip:{request.META.get("REMOTE_ADDR")}'
+
+    def get_rate_limit_rate(self, request):
+        if request.path == "/login/":  # Stricter limit for login
+            return settings.RATELIMIT_RATES["login"]
+        if request.user.is_authenticated:
+            return settings.RATELIMIT_RATES["user"]
+        return settings.RATELIMIT_RATES["anon"]

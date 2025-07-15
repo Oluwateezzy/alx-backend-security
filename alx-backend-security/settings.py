@@ -130,3 +130,15 @@ IPGEOLOCATION_SETTINGS = {
     "TIMEOUT": 10,  # seconds
     "CACHE_TIMEOUT": 86400,  # 24 hours in seconds
 }
+
+RATELIMIT_ENABLE = True  # Enable rate limiting globally
+RATELIMIT_VIEW = (
+    "ip_tracking.views.rate_limit_exceeded"  # Custom view for rate limit exceeded
+)
+
+# Rate limit configurations
+RATELIMIT_RATES = {
+    "anon": "5/m",  # 5 requests per minute for anonymous users
+    "user": "10/m",  # 10 requests per minute for authenticated users
+    "login": "3/5m",  # Special stricter limit for login attempts
+}
